@@ -10,24 +10,34 @@ use Illuminate\Http\Request;
 
 class RachaController extends Controller
 {
+    /**
+     * Resetea los puntos de las rachas finalizadas.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function resetearPuntos()
     {
-        // Obtener todas las rachas que ya finalizaron
+        // Obtiene las rachas que han finalizado
         $rachasFinalizadas = Racha::where('fecha_fin', '<', Carbon::now())->get();
 
-        foreach ($rachasFinalizadas as $racha) {
-            // Eliminar los registros de puntos anteriores relacionados con la racha
-            PuntosCategoria::where('racha_id', $racha->id)->delete();
+        if ($rachasFinalizadas->isEmpty()) {
+            return response()->json(['message' => 'No hay rachas finalizadas para resetear.'], 204);
+        }
 
-            // Generar nuevos registros para esta racha con los puntos de la categoría
+        foreach ($rachasFinalizadas as $racha) {
+
+            PuntosCategoria::where('racha_id', $racha->id)->delete();
             $categorias = Categoria::all();
+            $nuevosPuntos = [];
+
             foreach ($categorias as $categoria) {
-                PuntosCategoria::create([
+                $nuevosPuntos[] = [
                     'categoria_id' => $categoria->id,
                     'racha_id' => $racha->id,
-                    'puntos' => $categoria->puntos, // Asignar los puntos predeterminados de la categoría
-                ]);
+                    'puntos' => $categoria->puntos,
+                ];
             }
+            PuntosCategoria::insert($nuevosPuntos);
         }
 
         return response()->json(['message' => 'Puntos reseteados exitosamente.']);

@@ -11,11 +11,11 @@ return new class extends Migration
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
             $table->string('name_categoria')->unique(); 
-            $table->integer('puntos'); // Agregamos puntos predeterminados
+            $table->integer('puntos'); 
             $table->timestamps();
         });
 
-        // Insertar categorías predeterminadas con puntos
+        
         DB::table('categorias')->insert([
             ['name_categoria' => 'Carnes', 'puntos' => 10],
             ['name_categoria' => 'Granos', 'puntos' => 5],

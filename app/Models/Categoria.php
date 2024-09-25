@@ -11,6 +11,6 @@ class Categoria extends Model
 
     public function userAdmi()
     {
-        return $this->belongsTo(UserAdmi::class);
+        return $this->belongsTo(AdmiModel::class);
     }
 }

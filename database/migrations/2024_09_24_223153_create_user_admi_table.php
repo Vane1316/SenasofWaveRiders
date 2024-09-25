@@ -1,7 +1,9 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -16,6 +18,18 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        // Insertar datos predeterminados solo si la tabla está vacía
+        if (DB::table('user_admi')->count() === 0) {
+            DB::table('user_admi')->insert([
+                [
+                    'name' => 'Daniel',
+                    'email' => 'daniel@gmail.com',
+                    'password' => bcrypt('12345'), 
+                    'email_verified_at' => now(),  
+                ],
+            ]);
+        }
     }
 
     public function down(): void
